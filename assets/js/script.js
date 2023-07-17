@@ -16,7 +16,7 @@ function processOptions(form) {
             optArray.push(entry[1]);
         }
     }
-    
+
     form.delete("options");
 
     // Convert the array back to a string
@@ -50,6 +50,7 @@ async function postForm(e) {
     if (response.ok) {
         displayErrors(data);
     } else {
+        displayException(data);
         throw new Error(data.error);
     }
 }
@@ -83,20 +84,38 @@ async function getStatus(e) {
     if (response.ok) {
         displayStatus(data);
     } else {
+        displayException(data);
         throw new Error(data.error);
     }
 
     // pass the data to a display function
     function displayStatus(data) {
-        let heading = document.getElementById("resultsModalTitle").innerText = "API Key Status";
-        let body = document.getElementById("results-content").innerHTML = `Your key is valid until<br> ${data.expiry}`;
-        resultsModal.show();
-
-        // let heading = "API Key Status";
-        // let results = `<div>Your key is valid until</div>`;
-        // results += `<div class="key-status">${data.expiry}</div>`;
+        // let heading = document.getElementById("resultsModalTitle").innerText = "API Key Status";
+        // let body = document.getElementById("results-content").innerHTML = `Your key is valid until<br> ${data.expiry}`;
+        // resultsModal.show();
+        let heading = "API Key Status";
+        let results = `<div>Your key is valid until</div>`;
+        results += `<div class="key-status">${data.expiry}</div>`;
         
-        // document.getElementById("resultsModalTitle").innerText = heading;
-        // document.getElementById("results-content").innerText = results;
+        document.getElementById("resultsModalTitle").innerText = heading;
+        document.getElementById("results-content").innerText = results;
+        resultsModal.show();
     }
+}
+
+// Keep the errors displaying in the console
+// Create a displayException() function to display the exception in the modal
+    // The modal displays a heading of "An Exception Occurred"
+    // The contents should be the status code, error number and error text
+function displayException(data) {
+    
+    let heading = document.getElementById("resultsModalTitle").innerText = "An Exception Occurred";
+    
+    let results = `<div><p>The API returned status code ${data.status_code}</p>`;
+    results += `<p>Error number: <strong>${data.error_no}</strong></p>`;
+    results += `<p>Error text: <strong>${data.error}</strong></p></div>`;
+    
+    document.getElementById("results-content").innerHTML = results;
+
+    resultsModal.show();
 }
